@@ -5,6 +5,7 @@ use App\Http\Controllers\CarbonDataController;
 use App\Http\Controllers\CarbonTradeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PetaController;
+use App\Http\Controllers\SertifikatKarbonController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,4 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('data-carbon', CarbonDataController::class)
         ->except(['show'])
         ->parameters(['data-carbon' => 'carbonData']);
+
+    Route::resource('sertifikat-karbon', SertifikatKarbonController::class)
+        ->except(['show'])
+        ->parameters(['sertifikat-karbon' => 'sertifikatKarbon']);
 });

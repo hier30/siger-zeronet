@@ -29,5 +29,9 @@ class DatabaseSeeder extends Seeder
                 CarbonDataSeeder::class,
             ]);
         }
+
+        $this->call([
+            SertifikatKarbonSeeder::class,
+        ]);
     }
 }

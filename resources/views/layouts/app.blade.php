@@ -90,6 +90,16 @@
                     </svg>
                     <span class="sidebar-text text-sm font-medium">Kelola Data Carbon</span>
                 </a>
+
+                {{-- Sertifikat Karbon --}}
+                <a href="{{ route('sertifikat-karbon.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group
+                          {{ request()->routeIs('sertifikat-karbon.*') ? 'bg-white/15 text-white shadow-lg shadow-black/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7 4h10a2 2 0 012 2v14l-7-3-7 3V6a2 2 0 012-2z"/>
+                    </svg>
+                    <span class="sidebar-text text-sm font-medium">Sertifikat Karbon</span>
+                </a>
             @endauth
         </nav>
 
