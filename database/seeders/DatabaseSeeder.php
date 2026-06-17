@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\CarbonData;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,15 +17,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::updateOrCreate([
+            'email' => 'admin@sigerzeronet.local',
+        ], [
+            'name' => 'Admin SigerZeroNet',
+            'password' => Hash::make('admin12345'),
         ]);
 
-        $this->call([
-            CarbonDataSeeder::class,
-        ]);
+        if (CarbonData::query()->doesntExist()) {
+            $this->call([
+                CarbonDataSeeder::class,
+            ]);
+        }
     }
 }

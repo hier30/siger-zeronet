@@ -79,10 +79,41 @@
                 </svg>
                 <span class="sidebar-text text-sm font-medium">Carbon Trade</span>
             </a>
+
+            @auth
+                {{-- Kelola Data Carbon --}}
+                <a href="{{ route('data-carbon.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group
+                          {{ request()->routeIs('data-carbon.*') ? 'bg-white/15 text-white shadow-lg shadow-black/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16M8 3v18M16 3v18"/>
+                    </svg>
+                    <span class="sidebar-text text-sm font-medium">Kelola Data Carbon</span>
+                </a>
+            @endauth
         </nav>
 
         {{-- Sidebar Footer --}}
-        <div class="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-white/10">
+        <div class="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-white/10 space-y-1">
+            @guest
+                <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200 w-full">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586l6.257-6.257A6 6 0 1121 9z"/>
+                    </svg>
+                    <span class="sidebar-text text-sm font-medium">Login</span>
+                </a>
+            @endguest
+            @auth
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200 w-full">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
+                        </svg>
+                        <span class="sidebar-text text-sm font-medium">Logout</span>
+                    </button>
+                </form>
+            @endauth
             <button id="sidebar-toggle" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all duration-200 w-full">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
@@ -105,10 +136,6 @@
                     @hasSection('year-filter')
                         @yield('year-filter')
                     @endif
-                    <div class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <span class="text-xs font-medium text-emerald-700">Live Data</span>
-                    </div>
                 </div>
             </div>
         </header>
