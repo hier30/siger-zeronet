@@ -181,19 +181,125 @@ Project ini bisa dideploy dengan Railway sebagai hosting Laravel dan Supabase se
 
 ### 1. Siapkan Supabase
 
-1. Buat project Supabase.
-2. Buka SQL Editor.
-3. Aktifkan PostGIS:
+1. Buka https://supabase.com dan login.
+2. Klik **New project**.
+3. Isi:
+   - **Name**: `siger-zeronet`
+   - **Database Password**: buat password dan simpan baik-baik
+   - **Region**: pilih yang paling dekat, misalnya Singapore jika tersedia
+4. Tunggu project selesai dibuat.
+5. Masuk ke menu **SQL Editor**.
+6. Jalankan SQL ini untuk mengaktifkan PostGIS:
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS postgis;
 ```
 
-4. Import tabel/data `kecamatan` yang memiliki kolom `id`, `kecamatan`, dan `geom`.
+7. Pastikan extension aktif dengan menjalankan:
 
-### 2. Jalankan Migration ke Supabase
+```sql
+SELECT PostGIS_Version();
+```
 
-Isi `.env` lokal memakai credential Supabase terlebih dahulu, lalu jalankan:
+Kalau keluar versi PostGIS, berarti database siap untuk data peta.
+
+### 2. Import Data Kecamatan ke Supabase
+
+Project ini wajib punya tabel `kecamatan` karena peta membaca kolom `geom`.
+
+Minimal kolom yang dibutuhkan:
+
+- `id`
+- `kecamatan`
+- `geom`
+
+Cara paling aman adalah minta file dump SQL tabel `kecamatan` dari database lokal/teman, misalnya:
+
+```text
+dump_kecamatan.sql
+```
+
+Lalu import ke Supabase. Ada dua cara:
+
+#### Opsi A: Import lewat SQL Editor
+
+1. Buka file `dump_kecamatan.sql`.
+2. Copy isi SQL-nya.
+3. Paste ke Supabase **SQL Editor**.
+4. Klik **Run**.
+
+#### Opsi B: Import lewat terminal
+
+Ambil connection string Supabase:
+
+1. Buka Supabase project.
+2. Masuk ke **Project Settings**.
+3. Pilih **Database**.
+4. Cari bagian **Connection string**.
+5. Pilih mode **Session pooler** atau **Direct connection** untuk import dari lokal.
+
+Contoh command:
+
+```bash
+psql "postgresql://USER:PASSWORD@HOST:PORT/postgres" -f path/ke/dump_kecamatan.sql
+```
+
+Setelah import, cek tabel:
+
+```sql
+SELECT id, kecamatan, ST_AsGeoJSON(geom)
+FROM kecamatan
+LIMIT 1;
+```
+
+Kalau query itu berhasil, data kecamatan dan PostGIS sudah aman.
+
+### 3. Ambil Credential Database Supabase
+
+Untuk Railway, sebaiknya pakai **Transaction pooler**.
+
+Di Supabase:
+
+1. Masuk **Project Settings**.
+2. Pilih **Database**.
+3. Cari **Connection string**.
+4. Pilih **Transaction pooler**.
+5. Catat bagian ini:
+   - host
+   - port
+   - database
+   - user
+   - password
+
+Biasanya untuk Railway:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=host_pooler_supabase
+DB_PORT=6543
+DB_DATABASE=postgres
+DB_USERNAME=user_supabase
+DB_PASSWORD=password_supabase
+DB_SSLMODE=require
+```
+
+### 4. Jalankan Migration ke Supabase
+
+Isi `.env` lokal memakai credential Supabase terlebih dahulu.
+
+Contoh:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=host_supabase
+DB_PORT=5432
+DB_DATABASE=postgres
+DB_USERNAME=postgres
+DB_PASSWORD=password_supabase
+DB_SSLMODE=require
+```
+
+Setelah `.env` lokal mengarah ke Supabase, jalankan:
 
 ```bash
 php artisan migrate
@@ -209,7 +315,7 @@ railway/init-app.sh
 
 Jalankan script ini hanya setelah database Supabase dan tabel `kecamatan` sudah siap.
 
-### 3. Deploy Laravel ke Railway
+### 5. Deploy Laravel ke Railway
 
 1. Push project ke GitHub.
 2. Buat project baru di Railway.
