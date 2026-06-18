@@ -175,6 +175,78 @@ Jika ingin membuat asset production:
 npm run build
 ```
 
+## Deploy Railway + Supabase
+
+Project ini bisa dideploy dengan Railway sebagai hosting Laravel dan Supabase sebagai database PostgreSQL/PostGIS.
+
+### 1. Siapkan Supabase
+
+1. Buat project Supabase.
+2. Buka SQL Editor.
+3. Aktifkan PostGIS:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis;
+```
+
+4. Import tabel/data `kecamatan` yang memiliki kolom `id`, `kecamatan`, dan `geom`.
+
+### 2. Jalankan Migration ke Supabase
+
+Isi `.env` lokal memakai credential Supabase terlebih dahulu, lalu jalankan:
+
+```bash
+php artisan migrate
+php artisan db:seed
+php artisan db:seed --class=CarbonData2026Seeder
+```
+
+Jika memakai Railway pre-deploy, script opsional tersedia di:
+
+```text
+railway/init-app.sh
+```
+
+Jalankan script ini hanya setelah database Supabase dan tabel `kecamatan` sudah siap.
+
+### 3. Deploy Laravel ke Railway
+
+1. Push project ke GitHub.
+2. Buat project baru di Railway.
+3. Pilih Deploy from GitHub Repo.
+4. Pilih repo `siger-zeronet`.
+5. Tambahkan environment variables dari `.env.railway.example`.
+
+Minimal variable penting:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:isi_app_key
+APP_URL=https://domain-railway-kamu.up.railway.app
+
+DB_CONNECTION=pgsql
+DB_HOST=host_supabase_pooler
+DB_PORT=6543
+DB_DATABASE=postgres
+DB_USERNAME=user_supabase
+DB_PASSWORD=password_supabase
+DB_SSLMODE=require
+
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+LOG_CHANNEL=stderr
+```
+
+Generate `APP_KEY` lokal jika belum punya:
+
+```bash
+php artisan key:generate --show
+```
+
+Setelah Railway deploy berhasil, buka domain Railway dan cek halaman dashboard.
+
 ## Testing Cepat
 
 Jalankan test:
